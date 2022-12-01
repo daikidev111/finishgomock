@@ -1,7 +1,19 @@
 package a
 
-func f() {
-	// The pattern can be written in regular expression.
-	var gopher int // want "pattern"
-	print(gopher)  // want "identifier is gopher"
+import (
+	"testing"
+
+	"github.com/golang/mock/gomock"
+)
+
+// func f(t *testing.T) {
+// 	mockF := gomock.NewController(t)
+// 	a := "hi"
+// 	print(a)
+// 	mockF.Finish()
+// }
+
+func ok(t *testing.T) {
+	mockOk := gomock.NewController(t)
+	defer mockOk.Finish() // want "identifier is GoMock Finish"
 }
