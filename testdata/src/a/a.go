@@ -8,12 +8,12 @@ import (
 
 func okFirst(t *testing.T) {
 	mock := gomock.NewController(t)
-	mock.Finish() // want "identifier is GoMock Finish"
+	mock.Finish() // want "detected an unnecessary call to Finish on gomock.Controllers"
 }
 
 func okSecond(t *testing.T) {
 	mock := gomock.NewController(t)
-	defer mock.Finish() // want "identifier is GoMock Finish"
+	defer mock.Finish() // want "detected an unnecessary call to Finish on gomock.Controllers"
 }
 
 func failFirst(t *testing.T) {

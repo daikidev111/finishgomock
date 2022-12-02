@@ -9,7 +9,7 @@ import (
 	"golang.org/x/tools/go/ast/inspector"
 )
 
-const doc = "finishgomock is a linter that detects a GoMock Finish call when the testing package is used"
+const doc = "finishgomock is a linter that detects an unnecessary call to Finish on gomock.Controller"
 
 var Analyzer = &analysis.Analyzer{
 	Name: "finishgomock",
@@ -32,22 +32,15 @@ func run(pass *analysis.Pass) (interface{}, error) {
 	inspect.Preorder(nodeFilter, func(n ast.Node) {
 		switch callExprTyp := n.(type) {
 		case *ast.CallExpr:
-			var flgMockFinish bool
 			if strings.Contains(pass.TypesInfo.TypeOf(callExprTyp).String(), "github.com/golang/mock/gomock.Controller") {
 				flgMockPkg = true
 			}
 			if callExprTyp.Fun == nil {
 				return
 			}
-			selExpr, ok := callExprTyp.Fun.(*ast.SelectorExpr)
-			if !ok { // if target node is not detected, break to prevent from throwing panic
-				break
-			}
-			if selExpr.Sel.Name == "Finish" {
-				flgMockFinish = true
-			}
-			if flgMockFinish && flgMockPkg { // if both true, finish and gomock used
-				pass.Reportf(selExpr.Sel.NamePos, "identifier is GoMock Finish")
+			fieldSel := callExprTyp.Fun.(*ast.SelectorExpr).Sel
+			if fieldSel.Name == "Finish" && flgMockPkg {
+				pass.Reportf(fieldSel.NamePos, "detected an unnecessary call to Finish on gomock.Controllers")
 			}
 		}
 	})
