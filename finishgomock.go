@@ -11,7 +11,6 @@ import (
 
 const doc = "finishgomock is a linter that detects a GoMock Finish call when the testing package is used"
 
-// Analyzer is ...
 var Analyzer = &analysis.Analyzer{
 	Name: "finishgomock",
 	Doc:  doc,
@@ -21,7 +20,7 @@ var Analyzer = &analysis.Analyzer{
 	},
 }
 
-func run(pass *analysis.Pass) (any, error) {
+func run(pass *analysis.Pass) (interface{}, error) {
 	inspect := pass.ResultOf[inspect.Analyzer].(*inspector.Inspector)
 
 	nodeFilter := []ast.Node{
@@ -34,11 +33,9 @@ func run(pass *analysis.Pass) (any, error) {
 		switch callExprTyp := n.(type) {
 		case *ast.CallExpr:
 			var flgMockFinish bool
-
-			if (strings.Contains(pass.TypesInfo.TypeOf(callExprTyp).String(), "github.com/golang/mock/gomock.Controller")) {
+			if strings.Contains(pass.TypesInfo.TypeOf(callExprTyp).String(), "github.com/golang/mock/gomock.Controller") {
 				flgMockPkg = true
 			}
-
 			if callExprTyp.Fun == nil {
 				return
 			}
@@ -46,16 +43,13 @@ func run(pass *analysis.Pass) (any, error) {
 			if !ok { // if target node is not detected, break to prevent from throwing panic
 				break
 			}
-			if (selExpr.Sel.Name == "Finish") {
+			if selExpr.Sel.Name == "Finish" {
 				flgMockFinish = true
 			}
-
-			if (flgMockFinish && flgMockPkg) { // if both true, finish and gomock used
-				pass.Reportf(selExpr.Sel.NamePos, "identifier is GoMock Finish") 
+			if flgMockFinish && flgMockPkg { // if both true, finish and gomock used
+				pass.Reportf(selExpr.Sel.NamePos, "identifier is GoMock Finish")
 			}
-
-		} 
+		}
 	})
-
 	return nil, nil
 }
