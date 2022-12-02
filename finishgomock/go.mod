@@ -1,4 +1,4 @@
-module github.com/daikidev111/flag-finish-call-on-gomock
+module github.com/daikidev111/finishgomock
 
 go 1.19
 

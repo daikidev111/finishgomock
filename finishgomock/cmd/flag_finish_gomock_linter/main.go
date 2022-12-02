@@ -1,8 +1,8 @@
 package main
 
 import (
-	"example.com/flag_finish_gomock_linter"
+	"github.com/daikidev111/finishgomock"
 	"golang.org/x/tools/go/analysis/unitchecker"
 )
 
-func main() { unitchecker.Main(flag_finish_gomock_linter.Analyzer) }
+func main() { unitchecker.Main(finishgomock.Analyzer) }

@@ -1,9 +1,9 @@
-package flag_finish_gomock_linter_test
+package finishgomock_test
 
 import (
 	"testing"
 
-	"example.com/flag_finish_gomock_linter"
+	"github.com/daikidev111/finishgomock"
 	"github.com/gostaticanalysis/testutil"
 	"golang.org/x/tools/go/analysis/analysistest"
 )
@@ -11,5 +11,5 @@ import (
 // TestAnalyzer is a test for Analyzer.
 func TestAnalyzer(t *testing.T) {
 	testdata := testutil.WithModules(t, analysistest.TestData(), nil)
-	analysistest.Run(t, testdata, flag_finish_gomock_linter.Analyzer, "a")
+	analysistest.Run(t, testdata, finishgomock.Analyzer, "a")
 }

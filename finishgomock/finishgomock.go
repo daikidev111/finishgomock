@@ -1,4 +1,4 @@
-package flag_finish_gomock_linter
+package finishgomock
 
 import (
 	"go/ast"
