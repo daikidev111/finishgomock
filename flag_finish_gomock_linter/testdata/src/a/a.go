@@ -6,14 +6,16 @@ import (
 	"github.com/golang/mock/gomock"
 )
 
-// func f(t *testing.T) {
-// 	mockF := gomock.NewController(t)
-// 	a := "hi"
-// 	print(a)
-// 	mockF.Finish()
+func okFirst(t *testing.T) {
+	mock := gomock.NewController(t)
+	mock.Finish() // want "identifier is GoMock Finish"
+}
+
+// func okSecond(t *testing.T) {
+// 	mock := gomock.NewController(t)
+// 	defer mock.Finish() // want "identifier is GoMock Finish"
 // }
 
-func ok(t *testing.T) {
-	mockOk := gomock.NewController(t)
-	defer mockOk.Finish() // want "identifier is GoMock Finish"
-}
+// func  failFirst(t *testing.T) {
+// 	gomock.NewController(t)
+// }
