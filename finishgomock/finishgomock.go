@@ -28,16 +28,16 @@ func run(pass *analysis.Pass) (any, error) {
 		(*ast.CallExpr)(nil),
 	}
 
-	go_mock_use_flag := false // once true, it stays true for the rest of preorder traversal process
+	var flgMockPkg bool // once true, it stays true for the rest of preorder traversal process
 
 	inspect.Preorder(nodeFilter, func(n ast.Node) {
 		switch callExprTyp := n.(type) {
 		case *ast.CallExpr:
-			go_mock_use_finish := false
+			var flgMockFinish bool
 
 			// new_cont_flag := false
 			if (strings.Contains(pass.TypesInfo.TypeOf(callExprTyp).String(), "github.com/golang/mock/gomock.Controller")) {
-				go_mock_use_flag = true
+				flgMockPkg = true
 				// if (strings.Compare(callExprTyp.Fun.(*ast.SelectorExpr).Sel.Name, "NewController") == 0) {
 				// 	new_cont_flag = true
 				// }
@@ -46,16 +46,16 @@ func run(pass *analysis.Pass) (any, error) {
 			if callExprTyp.Fun == nil {
 				return
 			}
-			target_node, ok := callExprTyp.Fun.(*ast.SelectorExpr)
+			selExpr, ok := callExprTyp.Fun.(*ast.SelectorExpr)
 			if !ok { // if target node is not detected, break to prevent from throwing panic
 				break
 			}
-			if (target_node.Sel.Name == "Finish") {
-				go_mock_use_finish = true
+			if (selExpr.Sel.Name == "Finish") {
+				flgMockFinish = true
 			}
 
-			if (go_mock_use_finish && go_mock_use_flag) { // if both true, finish and gomock used
-				pass.Reportf(target_node.Sel.NamePos, "identifier is GoMock Finish") 
+			if (flgMockFinish && flgMockPkg) { // if both true, finish and gomock used
+				pass.Reportf(selExpr.Sel.NamePos, "identifier is GoMock Finish") 
 			}
 
 		} 
