@@ -9,11 +9,11 @@ import (
 	"golang.org/x/tools/go/ast/inspector"
 )
 
-const doc = "flag_finish_gomock_linter is a linter that detects GoMock Finish Call when the testing package is used"
+const doc = "finishgomock is a linter that detects a GoMock Finish call when the testing package is used"
 
 // Analyzer is ...
 var Analyzer = &analysis.Analyzer{
-	Name: "flag_finish_gomock_linter",
+	Name: "finishgomock",
 	Doc:  doc,
 	Run:  run,
 	Requires: []*analysis.Analyzer{
