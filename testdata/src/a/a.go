@@ -16,6 +16,6 @@ func okSecond(t *testing.T) {
 	defer mock.Finish() // want "identifier is GoMock Finish"
 }
 
-func  failFirst(t *testing.T) {
+func failFirst(t *testing.T) {
 	gomock.NewController(t)
 }
