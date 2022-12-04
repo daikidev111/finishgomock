@@ -5,7 +5,7 @@
 </div>
 
 `finishgomock` is a golang linter that detects an unnecessary goMock Finish on gomock.Controller. 
-As per the offical document for gomock, it is not required to call ctrl.Finish() in a test method that uses goMock controller object anymore (only applied from go 1.14+). This linter is designed in a way that it flags and outputs an error when ctrl.Finish() is used in a test method, which achieves a reduction of unnecessary code.
+As per the official document for gomock, it is not required to call ctrl.Finish() in a test method that uses goMock controller object anymore (only applied from go 1.14+). This linter is designed in a way that it flags and outputs an error when ctrl.Finish() is used in a test method, which achieves a reduction of unnecessary code.
 For more details, please visit the official document: https://pkg.go.dev/github.com/golang/mock/gomock#NewController
 
 ### Installation
