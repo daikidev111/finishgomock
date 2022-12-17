@@ -30,6 +30,11 @@ func fail(t *testing.T) {
 	mock.Finish()
 }
 
+func failSecond(t *testing.T) {
+	mock := gomock.NewController(t)
+	defer mock.Finish()
+}
+
 func pass(t *testing.T) {
 	gomock.NewController(t)
 }
