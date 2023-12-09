@@ -27,22 +27,37 @@ func run(pass *analysis.Pass) (interface{}, error) {
 		(*ast.CallExpr)(nil),
 	}
 
-	var flgMockPkg bool // once true, it stays true for the rest of the preorder traversal process
-
 	inspect.Preorder(nodeFilter, func(n ast.Node) {
-		switch callExprTyp := n.(type) {
-		case *ast.CallExpr:
-			if strings.Contains(pass.TypesInfo.TypeOf(callExprTyp).String(), "github.com/golang/mock/gomock.Controller") {
-				flgMockPkg = true
-			}
-			if callExprTyp.Fun == nil {
-				return
-			}
-			fieldSel := callExprTyp.Fun.(*ast.SelectorExpr).Sel
-			if fieldSel.Name == "Finish" && flgMockPkg {
-				pass.Reportf(fieldSel.NamePos, "detected an unnecessary call to Finish on gomock.Controllers")
+		callExpr, ok := n.(*ast.CallExpr)
+		if !ok || callExpr.Fun == nil {
+			return
+		}
+
+		// Type assertion for selector expression
+		selectorExpr, ok := callExpr.Fun.(*ast.SelectorExpr)
+		if !ok {
+			return
+		}
+
+		// Check if the callExpr is to a gomock.Controller method
+		if isGomockControllerMethod(pass, callExpr) {
+			// Check for the specific Finish method call
+			if selectorExpr.Sel.Name == "Finish" {
+				// Report
+				pass.Reportf(selectorExpr.Sel.NamePos, "detected an unnecessary call to Finish on gomock.Controller")
 			}
 		}
 	})
 	return nil, nil
+}
+
+// Helper function to check if a call expression is a method on gomock.Controller
+func isGomockControllerMethod(pass *analysis.Pass, call *ast.CallExpr) bool {
+	if callExpr, ok := call.Fun.(*ast.SelectorExpr); ok {
+		receiverType := pass.TypesInfo.TypeOf(callExpr.X)
+		if receiverType != nil {
+			return strings.HasSuffix(receiverType.String(), "github.com/golang/mock/gomock.Controller")
+		}
+	}
+	return false
 }
